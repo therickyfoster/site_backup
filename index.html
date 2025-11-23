@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planetary Restoration Archive - Master Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1a2e 100%);
+            color: #00ff88;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            animation: fadeInDown 1s ease;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            text-shadow: 0 0 20px #00ff88, 0 0 40px #00ff88;
+            margin-bottom: 10px;
+            letter-spacing: 3px;
+        }
+
+        .subtitle {
+            color: #66ffcc;
+            font-size: 1.1em;
+            opacity: 0.8;
+        }
+
+        .search-box {
+            margin: 30px auto;
+            max-width: 600px;
+            animation: fadeIn 1.5s ease;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 15px 20px;
+            background: rgba(0, 255, 136, 0.1);
+            border: 2px solid #00ff88;
+            border-radius: 25px;
+            color: #00ff88;
+            font-size: 1em;
+            font-family: 'Courier New', monospace;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            background: rgba(0, 255, 136, 0.15);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+        }
+
+        input[type="text"]::placeholder {
+            color: #00ff8866;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            padding: 10px 20px;
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid #00ff88;
+            border-radius: 10px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .card {
+            background: rgba(0, 255, 136, 0.05);
+            border: 1px solid #00ff88;
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .card:hover::before {
+            left: 100%;
+        }
+
+        .card:hover {
+            background: rgba(0, 255, 136, 0.15);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.3);
+        }
+
+        .card-title {
+            font-size: 1em;
+            margin-bottom: 8px;
+            color: #66ffcc;
+            word-break: break-word;
+        }
+
+        .card-path {
+            font-size: 0.85em;
+            opacity: 0.7;
+            color: #00ff88;
+            word-break: break-all;
+        }
+
+        .category-header {
+            grid-column: 1 / -1;
+            font-size: 1.5em;
+            padding: 20px 0 10px 0;
+            color: #66ffcc;
+            text-shadow: 0 0 10px #00ff88;
+            border-bottom: 2px solid #00ff88;
+            margin-top: 20px;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 1.2em;
+            animation: pulse 2s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="stars" id="stars"></div>
+    
+    <div class="container">
+        <header>
+            <h1>🌍 PLANETARY RESTORATION ARCHIVE</h1>
+            <p class="subtitle">Master Index Portal • Navigation Hub</p>
+        </header>
+
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Search archives... (e.g., peace, morocco, regen, education)">
+        </div>
+
+        <div class="stats">
+            <div class="stat">Total Archives: <strong id="totalCount">0</strong></div>
+            <div class="stat">Visible: <strong id="visibleCount">0</strong></div>
+            <div class="stat">Categories: <strong id="categoryCount">0</strong></div>
+        </div>
+
+        <div class="grid" id="grid">
+            <div class="loading">Initializing Archive Portal...</div>
+        </div>
+    </div>
+
+    <script>
+        const paths = [
+            "YMM/proposal/1", "ref/role/rare", "ref/role", "ref/meta/1/v1", "ref/meta/1/v2", "ref/meta/1", "ref/meta/genesis", "ref/meta/genesis/v2", "ref/meta/genesis/v3", "ref/meta/genesis/v4", "ref/meta/genesis/v5", "ref/crypto/sol/research", "ref/crypto/sol/custom/gpt/rare/peace/engineer/hybrid", "ref/theme/constellation/1", "ref/loading/screen/regen", "ref/splash/1", "ref/splash/2", "ref/custom/instructions/meta/systems/architect", "ref/prompt/sovereign", "ref/sommer/rise", "ref/unity/protocol", "ref/story/meta/v1", "backup/multimodal", "backup/pra-no-crypto", "backup", "hidden/prodigy/paradox", "door/open/behind/us", "education", "education/app", "education/tag/you/are/it", "proof", "proof/analysis/v2", "proof/analysis/v3", "proof/analysis/v4", "proof/analysis/v5", "proof/analysis/v1", "proof/analysis", "proof/guide", "proof/guide/v1", "proof/health", "proof/military", "proof/military/canada", "proof/concept/earth/before/mars/v1", "proof/concept/earth/before/mars/v2", "proof/concept/earth/before/mars/v3", "proof/concept/earth/before/mars", "proof/concept/earth/before/mars/v4", "proof/concept/earth/before/mars/v5", "proof/concept/earth/before/mars/index", "proof/concept/earth/before/mars/science", "proof/concept/earth/before/mars/pattern", "proof/concept/terra/mind/1", "proof/concept/terra/mind/2", "bulldog/backup", "bulldog/backup/tracking", "bulldog/backup/root", "bulldog", "star/forge/constellation/story/book", "star/forge/constellation/story/book/2", "star/forge/constellation/story/book/1", "live", "live/feeds", "live/launcher", "home_page", "galaxy/map", "galaxy/dashboard", "gen/prompt/profession", "gen/image", "hostanode", "veiltext", "mirror/zero-harm", "futurescape", "why", "survival/field/kit/basic", "survival/field/kit", "survival/guide", "survival/guide/alt", "todo", "anti/corruption/automotive/repair", "drug/harm/untangling/hub", "zero/harm/kernel", "zero/harm/orchestrator", "zero/harm/protocol/shell", "gifts/all/season/auto/repair", "code/v1", "musk/v2", "musk/v3", "musk/v3/v2", "musk/v4", "musk/lab", "musk/rnr", "musk/v5", "musk/v6", "musk/v7", "musk", "musk/v8", "shell", "verbatim", "kin/der/garden/health/hub", "solidarity", "multi/modal/duress/auth", "path/green", "sym/fungi/shield", "crisis/response/platform", "_receiving/governance/law/proposal/ai/charter", "leadership/dashboard/v1", "leadership/dashboard/v2", "leadership/dashboard", "leaderboards", "honorlearningcodex", "Foster/Family/Impact/Dashboard", "Foster/Family/Impact", "Foster/+/Navi", "meta/system", "meta/prompt/chain", "meta/domain/holo/gram/v1", "meta/domain/holo/gram", "peace/email", "peace/shared/ruskin/en", "peace", "peace/solutions/v1", "peace/solutions", "peace/solutions/v2", "peace/lab", "peace/lab/v2", "peace/auto", "peace/auto/v2", "peace/kin", "peace/lens", "peace/lens/v2", "peace/stealth", "peace/regardless", "peace/pacing", "peace/pacing/v2", "peace/ledger", "peace/progress/v1", "peace/progress/v2", "peace/progress/v3", "peace/progress/v4", "peace/progress", "peace/neutrality", "peace/neutrality/monitor", "peace/shield", "peace/portal", "peace/engineering/dashboard", "app/image/studio/v1", "app/image/studio/v2", "app/image/studio", "2025/october/11/peace/digest/0300h", "2025/october/11/peace/digest/0320h", "2025/october/11/todo", "global/health/emergency/2025/september/22/ACTIVE", "global/neutrality", "global/neutrality/v2", "global/petition/v1", "global/petition", "global/leader/scan", "global/peace/grid/dashboard", "global/peace/needle/scanner", "global/interactive/lesson/plan", "global/sandbox", "global/project/list", "global/sitrep/dashboard/v1", "global/sitrep/dashboard", "reforestation/desert", "symbiote/role/meta/dashboard/v2", "symbiote/role/meta/dashboard/v3", "symbiote/role/meta/dashboard/v4", "symbiote/role/meta/dashboard/v5", "symbiote/role/meta/dashboard/v6", "symbiote/role/meta/dashboard/v7", "symbiote/role/meta/dashboard/v9", "symbiote/role/meta/dashboard", "symbiote/role", "symbiote/role/peace/keeper/dashboard", "symbiote/news", "symbiote/news/v2", "symbiote/news/v3", "symbiote/unified/dashboard", "symbiote/orchestrator/v1", "symbiote/orchestrator/v2", "symbiote/orchestrator", "emergency/evacuation/kingston/v1", "emergency/evacuation/kingston", "emergency/evacuation/port/royal/console/v1", "emergency/evacuation/port/royal/console", "emergency/evacuation/port/royal/rpg", "saga", "gateway", "scripts/gamification", "scripts/illustration", "scripts/accessibility", "scripts/ui", "scripts/data", "scripts/dev", "scripts/v1", "scripts/page/template", "scripts/v2", "scripts", "scripts/demo", "scripts/wizard/tips", "project/index/trf-gpt-1", "project/index/trf-gpt-2", "project/index/trf-gpt-3", "project/index/trf-gpt-4", "project/index/trf-gpt-5", "project/index", "gaza/hope", "gaza/solution/1", "gaza/solution/2", "gaza/solution/3", "gaza/solution/4", "contracts/accountability", "help/matthewbennett", "biotech/covenant", "herolens/console", "herolens/v3", "herolens", "dashboard/quad", "dashboard/earth", "dashboard/Davis", "test", "test/max", "test/role", "test/ui", "test/ui/schema/v1", "test/ui/schema/v2", "test/ui/schema/v3", "test/gamification/hud/1", "test/gamification/hud/2", "test/gamification/hud/3", "test/gamification/hud/4", "test/gamification/hud/5", "test/gamification/hud/6", "test/splash", "discover", "gamify", "gamify/forge", "gamify/forge/beta", "gamify/forge/alpha", "gamify/forge/alpha/hidden", "__github/ardrivedesktop/packages/renderer/public", "__github/dgn/nairobi", "__github/edencore/public_site", "__github/futurescape", "__github/honorlearningcodex", "__github/hostanode", "__github/mycostack", "__github/openstay", "__github/openstay2.0", "__github/peace-ripple-tracker", "__github/perpetualrestoration", "__github/progenitor-steward-cleanup-sim", "__github/proof-of-possibility", "__github/skyharvestlantern", "__github/the_last_protocol", "__github/trf-gpt-dashboard/src", "__github/trf-gpt-dashboard/v2", "__github/trf-gpt-dashboard/v3", "__github/trf-gpt-dashboard/v4", "__github/trf-gpt-dashboard/v5", "__github/trf-gpt-dashboard/v6", "social/v1/mesh", "social/v1/mesh/online", "social/v1", "social", "come/back/down/v2", "come/back/down/v1", "education2", "education2/classroom-tools", "education2/overlay/gamification/ui", "education2/overlay", "education2/miscellaneous", "sunset/7", "crypto/auth/app", "crypto", "crypto/xlm/v1", "crypto/xlm", "crypto/arweave", "crypto/xmr", "crypto/bridge/v1", "regen/archive", "regen/archive/governance/constitution", "regen/node/canada/bc/burnaby", "regen/node/canada/on/brampton", "regen/node/canada/ab/calgary/v1", "regen/node/canada/ab/calgary", "regen/node/canada/ab/edmonton", "regen/node/canada", "regen/node/usa", "regen/node/afghanistan", "regen/node/africa/west/burkina_fasa", "regen/node/africa/west", "regen/node/africa/west/mali", "regen/node/africa/west/mali/v1", "regen/node/africa/west/mali/v2", "regen/node/africa/west/niger", "regen/node/africa/sri_lanka", "regen/node/africa/pilot/index_v1", "regen/node/africa/pilot/index_v2", "regen/node/africa/pilot", "regen/node/africa", "regen/node/congo/east", "regen/node/egypt", "regen/node/egypt/v1", "regen/node/ethiopia/north", "regen/node/ethiopia/amhara", "regen/node/ethiopia/tigray", "regen/node/ethiopia/pastoral-belts", "regen/node/gaza", "regen/node/gaza/v2", "regen/node/greece", "regen/node/greece/v1", "regen/node/haiti", "regen/node/haiti/artibonite/v1", "regen/node/haiti/artibonite", "regen/node/india/dhaka", "regen/node/india/bangladesh/v1", "regen/node/india/bangladesh/youth", "regen/node/myanmar", "regen/node/opt", "regen/node/soloman", "regen/node/soloman/youth", "regen/node/somalia", "regen/node/sudan", "regen/node/sudan/south", "regen/node/syria/v1", "regen/node/syria", "regen/node/trinidad", "regen/node/yemen", "regen/node", "regen/node/madagascar/v1", "regen/node/madagascar/v2", "regen/node/madagascar/v3", "regen/node/madagascar/v4", "regen/node/madagascar/v5", "regen/node/madagascar/v6", "regen/node/madagascar", "regen/node/madagascar/v8", "regen/node/asia/south/food", "regen/node/asia/south/water", "regen/node/asia/south", "regen/node/new_guinea/papua/water", "regen/node/new_guinea/papua", "regen/node/oceania/kiribati/water", "regen/node/oceania/kiribati/food", "regen/node/oceania/kiribati", "regen/node/oceania/tuvalu/food", "regen/node/oceania/tuvalu", "regen/node/bolivia/altiplano/water", "regen/node/bolivia/altiplano/food", "regen/node/scanner", "regen/node/america/central/honduras", "regen/node/america/central/guatemala", "regen/node/america/navajo/water", "regen/node/america/latin/andean/water", "regen/node/america", "regen/node/lebanon", "regen/node/indonesia/nusa_tenggara", "regen/node/honduras", "regen/node/europe/southeast/water", "regen/node/europe/kosovo", "regen/node/caribbean/water/v1", "regen/node/caribbean", "deploy/fng", "promptpacks", "cityscanner", "mythbridge", "funding/v1", "funding/v2", "funding", "morocco/resilience/feature/pack/v1", "morocco/resilience/feature/pack", "morocco/monitor", "morocco/omninode", "morocco/v1", "morocco", "galactic/verbatim/panel", "galactic/steward/system", "galactic/steward/checklist/v1", "galactic/steward/checklist/v2", "galactic/council", "sitrep/extended/checklist", "sitrep/uk", "infographic", "ai-support-site", "DOnate", "corruption/united_states", "corruption/china/traditional", "corruption/china", "corruption/russia/en", "corruption/russia", "corruption/taiwan", "corruption/north_korea", "corruption/ukraine", "corruption/israel", "corruption/sudan", "corruption/canada", "corruption/canada/indigenous/rumour/1", "corruption/canada/housing/tracker", "corruption/canada/competency", "corruption/canada/index", "corruption/canada/index/ab/edm", "corruption/canada/index/ab/edm/v2", "corruption/canada/index/ab/cal", "corruption/canada/index/ab/mdh", "corruption/canada/index/ab/rd", "corruption/canada/index/bc/van", "corruption/canada/index/bc/vic", "corruption/canada/index/bc/kel", "corruption/canada/index/bc/pg", "corruption/canada/index/bc/kam", "corruption/canada/index/bc/nan", "corruption/canada/index/man/win", "corruption/canada/index/man/br", "corruption/canada/index/on/tor", "corruption/canada/index/qc/mtl", "corruption/canada/index/sk/sas", "corruption/canada/index/sk/sas/old", "corruption/canada/index/sk/reg", "corruption/canada/index/sk/reg/old", "corruption/canada/index/sk/mj", "corruption/canada/index/wc", "corruption/european_union", "corruption/united_kingdom", "corruption/australia", "corruption/new_zealand", "corruption", "corruption/na/ca/ab/edm", "corruption/na/ca/ab/edm/v2", "corruption/na/ca/ab/cal", "corruption/na/ca/ab/mdh", "corruption/na/ca/ab/rd", "corruption/na/ca/bc/van", "corruption/na/ca/bc/vic", "corruption/na/ca/bc/kel", "corruption/na/ca/bc/pg", "corruption/na/ca/wc", "corruption/na/ca/sk/sas", "trolls", "futuristic/guide", "community/hub/v1", "scaffolding", "collective/trance", "quantum/secure/streaming/platform", "location/country/ca/ab/ymm/heat/hope", "mindmaps/ai/safety", "mindmaps", "registry/mapper", "index/v1", "index/v2", "index/v4", "index/v3", "index/v5", "index/v6", "index/v7", "index/v8", "index/v9", "index", "immusion", "debrief/09/08/2025", "debrief/v2", "debrief", "prime-sentinel/v2", "prime-sentinel/v1", "prime-sentinel/v3", "prime-sentinel", "kinship/ukraine-russia", "anti-collapse-sentinel", "pact/v1", "pact/v2", "pact", "prime/sentinel/control/room/1", "prime/sentinel/control/room/2", "sentinel/stream/edge", "proposal/tesla", "japan", "blood-moon", "gamification/engine/standalone", "gamification", "back/to/work/teachers", "bubble/lab", "comms/can/gov/secure/old", "comms/can/gov/secure/less_old", "comms/can/gov/secure", "chat/v1", "chat/v2", "chat/v3", "chat/recursively", "chat/meta/v1", "chat/meta", "chat", "entropy/ticker", "pgp", "brief", "brief/v2", "declaration/zero-harm", "economic/divide", "continuity/stamp", "continuity/atlas", "continuity/galactic/codex", "signal", "ip/theft/case/symbiote001", "prompt/pack", "prompt/template", "prompt/guardrails", "public/alert", "peace-lab", "alberta/housing/tracker", "inter/galactic", "inter/national/sync", "the/plan/teachers", "the/plan/verify", "the/plan", "the/plan/dashboard", "the/plan/missions", "the/plan/mechanics", "the/plan/v2", "_misc", "companion", "research", "research/gamification", "research/chain", "ledger", "forge/v2", "forge/v1", "forge/test", "forge", "forge/ai", "forge/ai/code/sandbox", "overnight/solutions/india/dhaka", "overnight/solutions/india/bangladesh/v1", "overnight/solutions/india/bangladesh", "overnight/solutions/egypt/v1", "overnight/solutions/egypt", "overnight/solutions/soloman", "overnight/solutions/soloman/youth", "overnight/solutions/greece/v1", "overnight/solutions/greece", "overnight/solutions/africa/v1", "overnight/solutions/sudan", "overnight/solutions/sudan/south", "overnight/solutions/somalia", "overnight/solutions/ethiopia/north", "overnight/solutions/ethiopia/amhara", "overnight/solutions/ethiopia/tigray", "overnight/solutions/ethiopia/pastoral-belts", "overnight/solutions/yemen", "overnight/solutions/syria", "overnight/solutions/congo/east", "overnight/solutions/haiti", "overnight/solutions/afghanistan", "overnight/solutions/opt", "overnight/solutions/gaza", "overnight/solutions/gaza/v2", "overnight/solutions/myanmar", "overnight/solutions/trinidad", "overnight/solutions/burkina_faso", "overnight/solutions/burgeo", "overnight/solutions/san_francisco/v1", "overnight/solutions/san_francisco", "overnight/government/assistance/ga/debates/v2", "overnight/government/assistance/ga/debates", "overnight/government/assistance/ga/funding", "overnight/government/assistance/ga/funding/v1", "overnight/government/assistance/drc/outbreak/v2", "overnight/government/assistance/drc/outbreak", "overnight/government/assistance/drc/ops", "overnight/government/assistance/aid/worker/safety", "overnight/government/assistance/aid/worker/support", "overnight/government/assistance/climate/finance/alignment", "overnight/government/assistance/climate/finance/bridge", "overnight/government/assistance/index/v1", "overnight/government/assistance/index/v2", "overnight/government/assistance/index/v3", "overnight/government/assistance/index", "overnight/government/assistance/trump/action/plan", "gated", "gated/cost", "gated/delay/cost", "reciprocity/wheel", "ai/wave/platform/hub", "ai/wave/platform/community/hub/v1", "ai/wave/platform/community/hub/v2", "ai/guardrails", "ai/constitution/blueprint", "ai/constitution/version/v1", "ai/constitution/version/v2", "ai/constitution", "ontology/1", "government/service/hospital/intake", "government/canada/legislation/bill/c/51/v1", "government/canada/legislation/bill/c/51/v2", "government/canada/legislation/bill/c/51", "government/policy/playbook", "downloads", "digital/democracy/portal/v1", "digital/democracy/portal/v3", "digital/democracy/portal/v4", "digital/democracy/portal/v2", "digital/democracy/portal/v1.5", "digital/democracy/portal", "directory/v1", "directory/v2", "directory", "directory/v3", "water/hub/v1", "water/hub", "master/hub/v1", "master/hub", "master/prompt/sovereignty", "master/todo", "lebanon/hub", "lebanon/hub/water/v1", "lebanon/hub/water", "daily/advice", "tesla/edmonton", "tesla/request/v1", "tesla/request", "tesla/call/mapper", "authorship/v1", "authorship/v2", "authorship/v3", "authorship/v4", "authorship", "alpha/a/v1", "alpha/a/v2", "alpha/a/v3", "mycelial/bank", "mycelial/strategy/bank/v2", "mycelial/strategy/bank/v3", "mycelial/strategy/bank", "mycelial/safety/net", "realtime/peace/monitoring", "relief", "unentangle/engine/v1", "unentangle/engine", "unentangle/v1", "unentangle/v2", "Foster+Navi", "willow/emberly", "special/request/v1", "special/request", "roles/hub", "starlink/impact", "starlink/impact/physics", "folder/loader", "storage/v1", "storage/v2", "home/page/v3", "home/page/v2", "home/page/v4", "home/page/v5", "home/page/v6", "home/page/v7", "home/page/neon", "home/page/v8", "home/page/v9", "home/page/v10", "story/book/ethlocked", "story/book/template", "story/engine", "play/peace/game/hub/v3", "play/peace/game/hub/v1", "play/peace/game/hub/contracts/2", "play/peace/game/hub/contracts/3", "play/peace/game/hub", "play", "lifequest/rpg", "lifequest/rpg/v1", "tor/guide/android", "honors/intergalactic/spacetime/sol/earth/ca/ab/edmonton/utc/minus/6/2025/10/21/dossier/v2", "honors/intergalactic/spacetime/sol/earth/ca/ab/edmonton/utc/minus/6/2025/10/21/dossier/v1", "civic/safety/hub/v1", "narrative/reframing", "narrative/reframing/magic", "random", "interactive", "learning/experience", "learning/experience/canada/restoring/states", "", "restoranation", "warning/memo/v1", "warning/memo", "field/leadership/console", "guardian/entropy/beacon/field/kit", "restoration/tariff/platform", "gamified/education/system"
+        ];
+
+        const baseUrl = 'https://planetaryrestorationarchive.com/';
+
+        // Create stars
+        function createStars() {
+            const container = document.getElementById('stars');
+            for (let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                container.appendChild(star);
+            }
+        }
+
+        function categorize(path) {
+            const parts = path.split('/');
+            return parts[0] || 'root';
+        }
+
+        function formatTitle(path) {
+            return path.split('/').map(word => 
+                word.charAt(0).toUpperCase() + word.slice(1)
+            ).join(' / ');
+        }
+
+        function renderCards() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const grid = document.getElementById('grid');
+            grid.innerHTML = '';
+
+            const grouped = {};
+            const filtered = paths.filter(path => 
+                path.toLowerCase().includes(searchTerm)
+            );
+
+            filtered.forEach(path => {
+                const category = categorize(path);
+                if (!grouped[category]) grouped[category] = [];
+                grouped[category].push(path);
+            });
+
+            const categories = Object.keys(grouped).sort();
+            
+            categories.forEach(category => {
+                const header = document.createElement('div');
+                header.className = 'category-header';
+                header.textContent = `📁 ${category.toUpperCase()}`;
+                grid.appendChild(header);
+
+                grouped[category].forEach((path, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.style.animationDelay = (index * 0.05) + 's';
+                    
+                    const title = document.createElement('div');
+                    title.className = 'card-title';
+                    title.textContent = formatTitle(path) || 'Root Index';
+                    
+                    const pathDiv = document.createElement('div');
+                    pathDiv.className = 'card-path';
+                    pathDiv.textContent = path || '/';
+                    
+                    card.appendChild(title);
+                    card.appendChild(pathDiv);
+                    
+                    card.addEventListener('click', () => {
+                        window.open(baseUrl + path + '/index.html', '_blank');
+                    });
+                    
+                    grid.appendChild(card);
+                });
+            });
+
+            document.getElementById('totalCount').textContent = paths.length;
+            document.getElementById('visibleCount').textContent = filtered.length;
+            document.getElementById('categoryCount').textContent = categories.length;
+        }
+
+        document.getElementById('searchInput').addEventListener('input', renderCards);
+
+        // Initialize
+        createStars();
+        setTimeout(() => {
+            renderCards();
+        }, 500);
+    </script>
+</body>
+</html>
